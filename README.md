@@ -1,37 +1,37 @@
-# Yaml Validator
-![N|Solid](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ47aU08PZRgClNPiVoUqoQ0u87vwVpNMudL9090VE6WIzmEc5p)
+# Heat Template Validator
+![N|Solid](https://inizanhugo.files.wordpress.com/2018/11/heat.png?w=800)
 
-YamlValidator is a tool created to validate *.yaml* files and check the parameters' existence in the server Openstack. 
+Heat Template Validator (HTV) is a tool created to validate *.yaml* (Heat) files and check the parameters' existence in the server Openstack. 
 
 ### What does it do?
 The main script *validator.py* will analyze every single file from the dir *./TemplateLocalStorage*. 
-It moves the valid files into the dir *./ValidYamlFiles*.
-It moves the warning files into the dir *./WarnYamlFiles*. 
-It moves the error files into the dir *./ErrorYamlFiles* and for each file of the last two groups it creates a log and then it moves all log files into the dir *./Log*. 
-At the very beginning of the installation YamlValidator will also create crontab lines inside the *list_cron.txt*.
+It moves the valid files into the dir *./ValidHeatFiles*.
+It moves the warning files into the dir *./WarnHeatFiles*. 
+It moves the error files into the dir *./ErrorHeatFiles* and for each file of the last two groups it creates a log and then it moves all log files into the dir *./Log*. 
+At the very beginning of the installation HTV will also create crontab lines inside the *list_cron.txt*.
 ### Installation
-YamlValidator requires [python3] and pip in order to run.
+HTV requires [python3] and pip in order to run.
 Open the terminal and download the application through *git*:
 ```sh
-$ git clone git@bitbucket.org:iumii/yamlvalidator.git
+$ git clone git@github.com:ko2-srls/HeatTemplateValidator.git
 ```
 Then change directory:
 ```sh
-$ cd yamlvalidator/
+$ cd HeatTemplateValidator/
 ```
 install the requirements from the *requirements.txt* file and  create the virtual environment:
 ```sh
 $ ./setup.sh
 ```
-There are few simple steps to follow in order to correctly use YamlValidator:
- - Move the yaml files into the *./TemplateLocalStorage* dir
+There are few simple steps to follow in order to correctly use HTV:
+ - Move the Heat files into the *./TemplateLocalStorage* dir
  - Move the open.rc files into the *./rc_files* dir
 After these files transfer activate the virtual environment:
 ```sh
 $ source ./venv/bin/activate
 ```
 Then the application will need the Openstack server password.
-Remember to enter this command only once: during the YamlValidator installation, or everytime you need to change the Openstack passwords or *openrc.hs* files.
+Remember to enter this command only once: during the HTV installation, or everytime you need to change the Openstack passwords or *openrc.hs* files.
 Enter the passwords after executing the *shadow.py* script:
 ```sh
 $ python shadow.py
@@ -45,7 +45,7 @@ $ python validator.py
 In the interactive mode the application will ask for which openrc file to use for the Openstack.
 After this you are ready to go, the files will be moved accordingly with their warnings or errors and logs will be created and moved to the *./Log* dir.
 ### In case the application directory changes
-In case you move the YamlValidator directory to a different path it is necessary to do as follows:
+In case you move the HeatTemplateValidator directory to a different path it is necessary to do as follows:
 ```sh
 $ python cron_update.py
 ```
@@ -56,7 +56,8 @@ To go back to a clean environment use the *goback.py* script:
 $ python goback.py
 ```
 ### Notes
-All advice welcome
+This application fully functions on Ubuntu with python3 and pip3 installed.
+All advice welcome!
 
 
    [python3]: <https://www.python.org/download/releases/3.0/>

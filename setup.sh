@@ -7,6 +7,6 @@ rm -rf venv
 virtualenv venv &&
 source ./venv/bin/activate
 pip install -r requirements.txt
-mkdir ValidYamlFiles WarnYamlFiles ErrYamlFiles Log TemplateLocalStorage
+mkdir ValidHeatFiles WarnHeatFiles ErrHeatFiles Log TemplateLocalStorage
 echo "Environemnt created and requirements installed"
 
