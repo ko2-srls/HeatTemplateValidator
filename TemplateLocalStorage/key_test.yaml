@@ -1,0 +1,12 @@
+heat_template_version: "2018-08-31"
+description: "version 2017-09-01 created by HOT Generator at Mon, 03 Jun 2019 10:58:24 GMT."
+resources:
+  Server_1:
+    type: "OS::Nova::Server"
+    properties:
+      security_groups:
+        - "a700692c-8f2e-47ec-bda5-9bda6bfe0cd7"
+      name: test_Server
+      flavor: "m1.small"
+      image: "Centos"
+      key_name: ko2_key2
