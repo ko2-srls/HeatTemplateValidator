@@ -1,63 +1,53 @@
 # Heat Template Validator
 ![N|Solid](https://inizanhugo.files.wordpress.com/2018/11/heat.png?w=200)
 
-Heat Template Validator (HTV) is a tool created to validate *.yaml* (Heat) files and check the parameters' existence in the server Openstack. 
+Heat Template Validator (HTV) is a tool created to validate *Heat templates* (yaml files) and check the parameters' existence in the Openstack server. 
 
 ### What does it do?
-The main script *validator.py* will analyze every single file from the dir *./TemplateLocalStorage*. 
-It moves the valid files into the dir *./ValidHeatFiles*.
-It moves the warning files into the dir *./WarnHeatFiles*. 
-It moves the error files into the dir *./ErrorHeatFiles* and for each file of the last two groups it creates a log and then it moves all log files into the dir *./Log*. 
-At the very beginning of the installation HTV will also create crontab lines inside the *list_cron.txt*.
+The main script *htv* will analyze every single file from the dir */htv/TemplateLocalStorage*. 
+It moves the valid files into the dir */htv/ValidHeatFiles*.
+It moves the warning files into the dir */htv/WarnHeatFiles*. 
+It moves the error files into the dir */htv/ErrorHeatFiles* and for each file of the error and warn groups it creates a log and then it moves all log files into the dir */htv/Log*. 
+At the very beginning of the installation HTV will also create crontab lines inside the */htv/list_cron.txt* file.
 ### Installation
-HTV requires [python >=3.5] and pip in order to run.
-Open the terminal and download the application through *git*:
+HTV requires [python>=3.5] and pip in order to run.
+Open the terminal and download the application through *pip*:
 ```sh
-$ git clone git@github.com:ko2-srls/HeatTemplateValidator.git
+$ pip install htv
 ```
-Then change directory:
+Then install and configure the package via *htv -i* or *htv --install*:
 ```sh
-$ cd HeatTemplateValidator/
-```
-install the requirements from the *requirements.txt* file and  create the virtual environment:
-```sh
-$ ./setup.sh
+$ htv -i
 ```
 There are few simple steps to follow in order to correctly use HTV:
  - Move the Heat files into the *./TemplateLocalStorage* dir
  - Move the open.rc files into the *./rc_files* dir
-After these files transfer activate the virtual environment:
+After this transfer execute *htv -s* or *htv --shadow*:
 ```sh
-$ source ./venv/bin/activate
+$ htv -s
 ```
-Then the application will need the Openstack server password.
+Then the application will prompt you the Openstack server password.
 Remember to enter this command only once: during the HTV installation, or everytime you need to change the Openstack passwords or *openrc.hs* files.
-Enter the passwords after executing the *shadow.py* script:
-```sh
-$ python shadow.py
-```
-This command will also generate a list of crontabs in the *list_cron.txt* file that you can use in the general crontab file depending on which *openrc.sh* file is needed.
+The *htv -s* command will also generate a list of crontabs in the *list_cron.txt* file that you can use in your system crontab file depending on which *openrc.sh* file is needed.
 ### Usage
-You can choose to run the application using the crontabs created or to run it interactively via *validator.py*:
+You can choose to run the application using the crontabs created or to run it interactively via *htv*:
 ```sh
-$ python validator.py
+$ htv
 ```
 In the interactive mode the application will ask for which openrc file to use for the Openstack.
-After this you are ready to go, the files will be moved accordingly with their warnings or errors and logs will be created and moved to the *./Log* dir.
+After this you are ready to go, the files will be moved accordingly with their warnings or errors and logs will be created and moved to the */htv//Log* dir.
+### Remember
+Whenever you want to use *htv* you first need to move the yaml files to the */htv/TemplateLocalStorage* fir.
 ### In case the application directory changes
 In case you move the HeatTemplateValidator directory to a different path it is necessary to do as follows:
 ```sh
-$ python cron_update.py
+$ htv -i
+$ htv -s
 ```
-This is a requirement in order to generate the new crontabs and having them working.
-### Clean environment for testing
-To go back to a clean environment use the *goback.py* script:
-```sh
-$ python goback.py
-```
+This is a requirement in order to generate the new crontabs and having the whole application working.
 ### Notes
-This application fully functions on Ubuntu and MacOS with python3 and pip3 installed.
+This application fully functions on Ubuntu and MacOS with *python3* and *pip3* installed.
 All advice welcome!
 
 
-   [python3]: <https://www.python.org/download/releases/3.0/>
+   [python>=3.5]: <https://www.python.org/downloads/release/python-350/>
