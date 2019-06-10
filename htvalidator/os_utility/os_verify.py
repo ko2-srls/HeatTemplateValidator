@@ -1,17 +1,38 @@
 # Openstack clients imports
-from htv.config.auth_config import glance, nova, neutron, cinder
+from htvalidator.config.auth_config import config
 # Miscellanea imports
-from htv.os_utility.miscellanea import get_param, printout
+from htvalidator.os_utility.miscellanea import get_param, printout
+
 BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
-#TODO get defaults parameters via openstack clients
+
+
+# TODO get defaults parameters via openstack clients
+
+
+def take_config(client):
+    clients = config()
+    if client == "glance":
+        return clients[0]
+    if client == "nova":
+        return clients[1]
+    if client == "neutron":
+        return clients[2]
+    if client == "cinder":
+        return clients[3]
+    if client == "keystone":
+        return clients[4]
+
 
 """ All these functions verifies the parameters existence (image, flavor, security group, key pair, network, volume, 
 port inside the openstack server """
+
+
 #################################################
 #              Verify GLANCE images             #
 #################################################
 def verify_images(images, doc, yamlfile):
     print(">> Verifying the image existence...")
+    glance = take_config("glance")
     # It executes a call via glance client to get all the images [images are Image class objects]
     images_list = glance.images.list()
     search_by_id = []
@@ -42,10 +63,12 @@ def verify_images(images, doc, yamlfile):
             else:
                 printout("     The image '{}' used in the template '{}' does not exist\n".format(image, yamlfile), RED)
 
+
 #################################################
 #              Verify NOVA flavors              #
 #################################################
 def verify_flavors(flavors, doc, yamlfile):
+    nova = take_config("nova")
     # It saves the list of flavors of the openstack server [flavors are Flavor class objects]
     flavors_list = nova.flavors.list()
     search_by_id = []
@@ -62,7 +85,8 @@ def verify_flavors(flavors, doc, yamlfile):
             if flavor in search_by_name or flavor in search_by_id:
                 printout("     The flavor '{}' used in the template '{}' exists\n".format(flavor, yamlfile), GREEN)
             else:
-                printout("     The flavor '{}' used in the template '{}' does not exist\n".format(flavor, yamlfile), RED)
+                printout("     The flavor '{}' used in the template '{}' does not exist\n".format(flavor, yamlfile),
+                         RED)
         # If the flavor is a dict it will look for its value in the parameters of the template
         else:
             flavor = get_param(flavor, doc)
@@ -73,13 +97,16 @@ def verify_flavors(flavors, doc, yamlfile):
             elif flavor in search_by_name or flavor in search_by_id:
                 printout("     The flavor '{}' used in the template '{}' exists\n".format(flavor, yamlfile), GREEN)
             else:
-                printout("     The flavor '{}' used in the template '{}' does not exist\n".format(flavor, yamlfile), RED)
+                printout("     The flavor '{}' used in the template '{}' does not exist\n".format(flavor, yamlfile),
+                         RED)
+
 
 #################################################
 #        Verify NEUTRON security groups         #
 #################################################
 def verify_secgroups(sec_groups, doc, yamlfile):
     print(">> Verifying the security group existence...")
+    neutron = take_config("neutron")
     # It saves the list of security groups of our openstack [security groups are dicts]
     security_list = neutron.list_security_groups()
     security_id_list = []
@@ -93,9 +120,12 @@ def verify_secgroups(sec_groups, doc, yamlfile):
         if type(sec_group) == str:
             # It checks if the security group appears in the list of security groups of our openstack
             if sec_group in security_id_list or sec_group in security_name_list:
-                printout("     The security group '{}' used in the template '{}' exists\n".format(sec_group, yamlfile), GREEN)
+                printout("     The security group '{}' used in the template '{}' exists\n".format(sec_group, yamlfile),
+                         GREEN)
             else:
-                printout("     The security group '{}' used in the template '{}' does not exist\n".format(sec_group, yamlfile), RED)
+                printout("     The security group '{}' used in the template '{}' does not exist\n".format(sec_group,
+                                                                                                          yamlfile),
+                         RED)
         else:
             sec_group = get_param(sec_group, doc)
             # If the return from the function is a dict it means the parameter has not be found/it will be allocated automatically
@@ -103,15 +133,20 @@ def verify_secgroups(sec_groups, doc, yamlfile):
                 for k, v in sec_group.items():
                     printout("{}\n".format(v), YELLOW)
             elif sec_group in security_id_list or sec_group in security_name_list:
-                printout("     The security group '{}' used in the template '{}' exists\n".format(sec_group, yamlfile), GREEN)
+                printout("     The security group '{}' used in the template '{}' exists\n".format(sec_group, yamlfile),
+                         GREEN)
             else:
-                printout("     The security group '{}' used in the template '{}' does not exist\n".format(sec_group, yamlfile), RED)
+                printout("     The security group '{}' used in the template '{}' does not exist\n".format(sec_group,
+                                                                                                          yamlfile),
+                         RED)
+
 
 #################################################
 #             Verify NEUTRON networks           #
 #################################################
 def verify_networks(networks, doc, yamlfile):
     print(">> Verifying the networks existence...")
+    neutron = take_config("neutron")
     for network in networks:
         if type(network) == str:
             # If the network is a str and the neutron.list_networks() function works then the network exists
@@ -120,7 +155,8 @@ def verify_networks(networks, doc, yamlfile):
             if search_by_name['networks'] or search_by_id['networks']:
                 printout("     The network '{}' used in the template '{}' exists\n".format(network, yamlfile), GREEN)
             else:
-                printout("     The network '{}' used in the template '{}' does not exist\n".format(network, yamlfile), RED)
+                printout("     The network '{}' used in the template '{}' does not exist\n".format(network, yamlfile),
+                         RED)
         # If it is a dictionary it has to find the parameter in the template
         elif type(network) == dict:
             network = get_param(network, doc)
@@ -132,9 +168,12 @@ def verify_networks(networks, doc, yamlfile):
                 search_by_name = neutron.list_networks(name=network)
                 search_by_id = neutron.list_networks(id=network)
                 if search_by_name['networks'] or search_by_id['networks']:
-                    printout("     The network '{}' used in the template '{}' exists\n".format(network, yamlfile), GREEN)
+                    printout("     The network '{}' used in the template '{}' exists\n".format(network, yamlfile),
+                             GREEN)
                 else:
-                    printout("     The network '{}' used in the template '{}' does not exist\n".format(network, yamlfile), RED)
+                    printout(
+                        "     The network '{}' used in the template '{}' does not exist\n".format(network, yamlfile),
+                        RED)
         # If it is a list it might have different keys/values
         elif type(network) == list:
             if 'port' in network[0]:
@@ -144,9 +183,14 @@ def verify_networks(networks, doc, yamlfile):
                     search_by_id = neutron.list_ports(id=port)
                     search_by_name = neutron.list_ports(name=port)
                     if search_by_id['ports'] or search_by_name['ports']:
-                        printout("     The network with port '{}' used in the template '{}' exists\n".format(port, yamlfile), GREEN)
+                        printout(
+                            "     The network with port '{}' used in the template '{}' exists\n".format(port, yamlfile),
+                            GREEN)
                     else:
-                        printout("     The network with port '{}' used in the template '{}' does not exist\n".format(port, yamlfile), RED)
+                        printout(
+                            "     The network with port '{}' used in the template '{}' does not exist\n".format(port,
+                                                                                                                yamlfile),
+                            RED)
                 elif type(port) == dict:
                     port = get_param(port, doc)
                     # If the return from the function is a dict it means the parameter has not be found/it will be allocated automatically
@@ -157,9 +201,13 @@ def verify_networks(networks, doc, yamlfile):
                         search_by_id = neutron.list_ports(id=port)
                         search_by_name = neutron.list_ports(name=port)
                         if search_by_id['ports'] or search_by_name['ports']:
-                            printout("     The network with port '{}' used in the template '{}' exists\n".format(port, yamlfile), GREEN)
+                            printout("     The network with port '{}' used in the template '{}' exists\n".format(port,
+                                                                                                                 yamlfile),
+                                     GREEN)
                         else:
-                            printout("     The network with port '{}' used in the template '{}' does not exist\n".format(port, yamlfile), RED)
+                            printout(
+                                "     The network with port '{}' used in the template '{}' does not exist\n".format(
+                                    port, yamlfile), RED)
             elif 'allocate_network' in network[0]:
                 # If it has 'allocate_network' it will be probably allocated automatically along with the template
                 allocate_network = network[0]['allocate_network']
@@ -182,13 +230,16 @@ def verify_networks(networks, doc, yamlfile):
                 if subnet in search_by_id or subnet in search_by_name:
                     printout("     The subnet '{}' used in the template '{}' exists\n".format(subnet, yamlfile), GREEN)
                 else:
-                    printout("     The subnet '{}' used in the template '{}' does not exist\n".format(subnet, yamlfile), RED)
+                    printout("     The subnet '{}' used in the template '{}' does not exist\n".format(subnet, yamlfile),
+                             RED)
+
 
 #################################################
 #              Verify NEUTRON ports             #
 #################################################
 def verify_ports(ports, doc, yamlfile):
     print(">> Verifying the ports existence...")
+    neutron = take_config("neutron")
     # For every port in the ports list it checks for its existence
     for port in ports:
         if type(port) == str:
@@ -216,11 +267,13 @@ def verify_ports(ports, doc, yamlfile):
                 else:
                     printout("     The port used in the template '{}' does not exist\n".format(yamlfile), RED)
 
+
 #################################################
 #             Verify NOVA key pairs             #
 #################################################
 def verify_keypairs(keypairs, doc, yamlfile):
     print(">> Verifying the keypairs existence...")
+    nova = take_config("nova")
     # It gets all the keypairs through the function nova.keypairs.list()
     keypairs_list = nova.keypairs.list()
     search_by_id = []
@@ -235,7 +288,8 @@ def verify_keypairs(keypairs, doc, yamlfile):
             if keypair in search_by_id or keypair in search_by_name:
                 printout("     The keypair '{}' used in the template '{}' exists\n".format(keypair, yamlfile), GREEN)
             else:
-                printout("     The keypair '{}' used in the template '{}' does not exist\n".format(keypair, yamlfile), RED)
+                printout("     The keypair '{}' used in the template '{}' does not exist\n".format(keypair, yamlfile),
+                         RED)
         elif type(keypair) == dict:
             keypair = get_param(keypair, doc)
             # If the return from the function is a dict it means the parameter has not be found/it will be allocated automatically
@@ -244,15 +298,20 @@ def verify_keypairs(keypairs, doc, yamlfile):
                     printout("{}\n".format(v), YELLOW)
             else:
                 if keypair in search_by_id or keypair in search_by_name:
-                    printout("     The keypair '{}' used in the template '{}' exists\n".format(keypair, yamlfile), GREEN)
+                    printout("     The keypair '{}' used in the template '{}' exists\n".format(keypair, yamlfile),
+                             GREEN)
                 else:
-                    printout("     The keypair '{}' used in the template '{}' does not exist\n".format(keypair, yamlfile), RED)
+                    printout(
+                        "     The keypair '{}' used in the template '{}' does not exist\n".format(keypair, yamlfile),
+                        RED)
+
 
 #################################################
 #             Verify CINDER volumes             #
 #################################################
 def verify_volumes(volumes, doc, yamlfile):
     print(">> Verifying the volumes existence...")
+    cinder = take_config("cinder")
     # It gets all the volumes through the function cinder.volume.list()
     volumes_list = cinder.volumes.list()
     search_by_id = []
@@ -267,7 +326,8 @@ def verify_volumes(volumes, doc, yamlfile):
             if volume in search_by_id or volume in search_by_name:
                 printout("     The volume '{}' used in the template '{}' exists\n".format(volume, yamlfile), GREEN)
             else:
-                printout("     The volume '{}' used in the template '{}' does not exist\n".format(volume, yamlfile), RED)
+                printout("     The volume '{}' used in the template '{}' does not exist\n".format(volume, yamlfile),
+                         RED)
         elif type(volume) == dict:
             volume = get_param(volume, doc)
             # If the return from the function is a dict it means the parameter has not be found/it will be allocated automatically
@@ -278,4 +338,5 @@ def verify_volumes(volumes, doc, yamlfile):
                 if volume in search_by_id or volume in search_by_name:
                     printout("     The volume '{}' used in the template '{}' exists\n".format(volume, yamlfile), GREEN)
                 else:
-                    printout("     The volume '{}' used in the template '{}' does not exist\n".format(volume, yamlfile), RED)
+                    printout("     The volume '{}' used in the template '{}' does not exist\n".format(volume, yamlfile),
+                             RED)

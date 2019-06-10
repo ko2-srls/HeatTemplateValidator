@@ -6,7 +6,6 @@ with open("./README.md", "r") as fh:
 setuptools.setup(
     name='htv',
     version='0.1.6',
-    # scripts=['htv/__main__.py'],
     author="floppino",
     author_email="martina.clem@gmail.com",
     description="A Heat Teamplate Validator",
@@ -21,7 +20,7 @@ setuptools.setup(
     ],
     entry_points={
         'console_scripts': [
-            'htv = htv.main:main_entry',
+            'htv = htvalidator.main:entry',
         ]},
     install_requires=['yamllint',
                       'cryptography',

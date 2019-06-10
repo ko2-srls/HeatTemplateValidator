@@ -8,6 +8,7 @@ import os
 dir_base = os.getcwd()
 home = os.environ['HOME']
 
+
 #################################################
 #              Get PARAMETERS values            #
 #################################################
@@ -38,12 +39,13 @@ def get_param(param, doc):
             # If k is "get_resource" it returns a message
             elif k == "get_resource":
                 result = {"message":
-                "     The parameter will be allocated automatically through another resource"}
+                              "     The parameter will be allocated automatically through another resource"}
             else:
                 pass
     if not result:
         result = {"message": "     The parameter is not present"}
     return result
+
 
 #################################################
 #            Ask for the openrc file            #
@@ -74,9 +76,11 @@ def ask_openrc():
         except Exception as e:
             print(e)
     else:
-        printout(">> There are no openrc files in '{}/htv/rc_files' dir. The application will now exit\n".format(home), RED)
+        printout(">> There are no openrc files in '{}/htv/rc_files' dir. The application will now exit\n".format(home),
+                 RED)
         sys.exit()
     return pwd, shfile
+
 
 #################################################
 #               Arguments parsing               #
@@ -116,7 +120,8 @@ def parse_args(arguments):
                                 pwd = pwd.encode()
                 else:
                     printout(
-                        ">> The selected openrc file is not present in '{}/htv/rc_files' dir. The application will now exit\n".format(home), RED)
+                        ">> The selected openrc file is not present in '{}/htv/rc_files' dir. The application will now exit\n".format(
+                            home), RED)
                     sys.exit()
         elif "b'" in arg:
             pwd = arg.split("'")[1]
@@ -126,17 +131,19 @@ def parse_args(arguments):
             pwd, shfile = ask_openrc()
     return pwd, shfile
 
+
 #################################################
 #                RAINBOW TERMINAL               #
 #################################################
 BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
 
-#following from Python cookbook, #475186
+
+# following from Python cookbook, #475186
 def has_colours(stream):
     if not hasattr(stream, "isatty"):
         return False
     if not stream.isatty():
-        return False # auto color only on TTYs
+        return False  # auto color only on TTYs
     try:
         import curses
         curses.setupterm()
@@ -144,12 +151,14 @@ def has_colours(stream):
     except:
         # guess false in case of error
         return False
+
+
 has_colours = has_colours(sys.stdout)
 
 
 def printout(text, colour=WHITE):
     if has_colours:
-        seq = "\x1b[1;%dm" % (30+colour) + text + "\x1b[0m"
+        seq = "\x1b[1;%dm" % (30 + colour) + text + "\x1b[0m"
         sys.stdout.write(seq)
     else:
         sys.stdout.write(text)

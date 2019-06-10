@@ -7,14 +7,15 @@ import os
 import sys
 import subprocess
 # Crontab generator import
-from htv.os_utility.crongen import cron_generator
-from htv.os_utility.miscellanea import printout
+from htvalidator.os_utility.crongen import cron_generator
+from htvalidator.os_utility.miscellanea import printout
+
 BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
 
 home = os.environ['HOME']
 
-def shadow():
 
+def shadow():
     # It creates an empty list
     crontabs = []
     # It gets the venv path
@@ -64,12 +65,13 @@ def shadow():
                 # At the end it appends the new line with the saved password
                 F.write("\n{}".format(password_line))
             # It generates the crontab for each openrc file and for each password
-            # TODO adjust path to venv (installation path)
-            crontab = '*/10 * * * * source {0}activate && python {0}/validator.py "{1}" "{2}"'.format(venv_path, encrypted, shfile)
+            crontab = '*/10 * * * * source {0}activate && python {0}/validator.py "{1}" "{2}"'.format(venv_path,
+                                                                                                      encrypted, shfile)
             # It adds the crontab to the list 'crontabs'
             crontabs.append(crontab)
     else:
-        printout(">> There are no openrc files in '{}/htv/rc_files' dir. The application will now exit\n".format(home), RED)
+        printout(">> There are no openrc files in '{}/htv/rc_files' dir. The application will now exit\n".format(home),
+                 RED)
         sys.exit()
 
     ############################################
@@ -78,8 +80,8 @@ def shadow():
     # It calls the cron_generator function to save the crontabs from the "crontabs" list into the list_cron.txt file
     try:
         cron_generator(crontabs)
-        printout(""">> Passwords have been correctly saved\n""", CYAN)
+        printout(">> Passwords have been correctly saved, now you can use 'htv'\n", CYAN)
+        printout(">> Remember to move the Heat templates to '{}/htv/TemplateLocalStorage' "
+                 "everytime you want to use 'htv'\n".format(home), CYAN)
     except Exception as e:
         printout(">> Crontabs have not been saved for an error:\n\n Error: {}\n".format(e), RED)
-
-

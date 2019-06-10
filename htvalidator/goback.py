@@ -2,7 +2,8 @@
 import os
 from os import listdir
 from os.path import isfile, join
-from htv.os_utility.miscellanea import printout
+from htvalidator.os_utility.miscellanea import printout
+
 BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
 
 try:
@@ -25,8 +26,6 @@ try:
     errfiles = [f for f in listdir("{}".format(patherr)) if isfile(join("{}".format(patherr), f))]
     # It then saves a list of only log files out of the previous list
     onlylog = [f for f in listdir("{}".format(pathlog)) if isfile(join("{}".format(pathlog), f)) and f.endswith(".log")]
-
-
 
     # It removes the Log files
     for logfile in onlylog:

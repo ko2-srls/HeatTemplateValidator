@@ -5,8 +5,9 @@ import os
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-#Utilities imports
-from htv.os_utility.miscellanea import printout
+# Utilities imports
+from htvalidator.os_utility.miscellanea import printout
+
 BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
 
 home = os.environ['HOME']
@@ -33,4 +34,3 @@ def keygen():
     file.write(e_key)
     file.close()
     return e_key
-

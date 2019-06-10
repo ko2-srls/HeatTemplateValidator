@@ -4,9 +4,11 @@ from os.path import isfile, join
 from os import listdir
 import sys
 import subprocess
-from htv.os_utility.miscellanea import printout
+from htvalidator.os_utility.miscellanea import printout
+
 BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
 home = os.environ['HOME']
+
 
 ############################################
 #        Crontab generator function        #
@@ -18,6 +20,7 @@ def cron_generator(crontabs):
         file = open('{}/htv/list_cron.txt'.format(home), 'a+')
         file.write("{}\n".format(cron))
         file.close()
+
 
 #################################################
 #             Password collection               #
@@ -33,13 +36,9 @@ def direct_cron_gen():
     file = open('{}/htv/list_cron.txt'.format(home), 'w')
     file.write("")
     file.close()
-    # It gets the base directory
-    dir_base = os.getcwd()
     # It saves all the .sh files corresponding to the admin-openrc.sh files
     onlyfiles = [f for f in listdir("{}/htv/rc_files".format(home)) if isfile(join("{}/htv/rc_files".format(home), f))]
     onlysh = [f for f in onlyfiles if f.endswith(".sh")]
-    # It gets the working directory
-    dir_base = os.getcwd()
     arguments = []
     for shfile in onlysh:
         # It opens the openrc file and reads it line by line

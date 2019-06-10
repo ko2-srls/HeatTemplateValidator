@@ -19,6 +19,7 @@ def get_images(doc):
                     images.append(v)
     return images
 
+
 # Flavors
 def get_flavors(doc):
     # It creates the empty list 'flavor'
@@ -35,6 +36,7 @@ def get_flavors(doc):
                     flavors.append(v)
     return flavors
 
+
 # Security groups
 def get_secgroups(doc):
     # It creates the empty list 'sec_groups'
@@ -50,6 +52,7 @@ def get_secgroups(doc):
                 if k == "security_groups":
                     sec_groups.append(v[0])
     return sec_groups
+
 
 # Networks
 def get_networks(doc):
@@ -70,6 +73,7 @@ def get_networks(doc):
                     networks.append(v)
     return networks
 
+
 # Ports
 def get_ports(doc):
     # It creates the empty list 'port'
@@ -87,6 +91,7 @@ def get_ports(doc):
                     ports.append(v)
     return ports
 
+
 # Keypairs
 def get_keypairs(doc):
     # It creates the empty list 'keypairs'
@@ -103,6 +108,7 @@ def get_keypairs(doc):
                 if k == "key_name":
                     keypairs.append(v)
     return keypairs
+
 
 # Volumes
 def get_volumes(doc):
