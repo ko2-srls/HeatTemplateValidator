@@ -4,8 +4,9 @@ from os import listdir
 import sys
 import os
 
-# It saves the current working directory
+# It saves the current working directory and the home of the user
 dir_base = os.getcwd()
+home = os.environ['HOME']
 
 #################################################
 #              Get PARAMETERS values            #
@@ -44,16 +45,15 @@ def get_param(param, doc):
         result = {"message": "     The parameter is not present"}
     return result
 
-# It saves all the .sh files corresponding to the admin-openrc.sh files
-onlyfiles = [f for f in listdir("../rc_files") if isfile(join("{../rc_files", f))]
-onlysh = [f for f in onlyfiles if f.endswith(".sh")]
-shfile = ""
-
 #################################################
 #            Ask for the openrc file            #
 #################################################
 # Function that asks the user to choose an openrc file form the given list
 def ask_openrc():
+    # It saves all the .sh files corresponding to the admin-openrc.sh files
+    onlyfiles = [f for f in listdir("{}/htv/rc_files".format(home)) if isfile(join("{}/htv/rc_files".format(home), f))]
+    onlysh = [f for f in onlyfiles if f.endswith(".sh")]
+    shfile = ""
     pwd = None
     shfile = None
     number = 1
@@ -74,7 +74,7 @@ def ask_openrc():
         except Exception as e:
             print(e)
     else:
-        printout(">> There are no openrc files in '/rc_files' dir. The application will now exit\n", RED)
+        printout(">> There are no openrc files in '{}/htv/rc_files' dir. The application will now exit\n".format(home), RED)
         sys.exit()
     return pwd, shfile
 
@@ -83,6 +83,10 @@ def ask_openrc():
 #################################################
 # It parses and saves the arguments passed with the function validator.py
 def parse_args(arguments):
+    # It saves all the .sh files corresponding to the admin-openrc.sh files
+    onlyfiles = [f for f in listdir("{}/htv/rc_files".format(home)) if isfile(join("{}/htv/rc_files".format(home), f))]
+    onlysh = [f for f in onlyfiles if f.endswith(".sh")]
+    shfile = ""
     pwd = None
     shfile = None
     for arg in arguments:
@@ -97,7 +101,7 @@ def parse_args(arguments):
             else:
                 if shfile in onlysh:
                     # It opens the file and uses a list comprehension in order to saves all the lines with OS_PASSWORD
-                    with open('../rc_files/{}'.format(shfile), 'rt') as F:
+                    with open('{}/htv/rc_files/{}'.format(home, shfile), 'rt') as F:
                         lines = [line for line in F.readlines() if "export OS_PASSWORD=" in line]
                         if lines:
                             # If the list has been created it splits the line
@@ -112,7 +116,7 @@ def parse_args(arguments):
                                 pwd = pwd.encode()
                 else:
                     printout(
-                        ">> The selected openrc file is not present in '/rc_files' dir. The application will now exit\n", RED)
+                        ">> The selected openrc file is not present in '{}/htv/rc_files' dir. The application will now exit\n".format(home), RED)
                     sys.exit()
         elif "b'" in arg:
             pwd = arg.split("'")[1]

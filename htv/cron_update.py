@@ -1,6 +1,6 @@
 # Utilities imports
-from htv.os_utility import direct_cron_gen
-from htv.os_utility import printout
+from htv.os_utility.crongen import direct_cron_gen
+from htv.os_utility.miscellanea import printout
 BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
 
 #####################

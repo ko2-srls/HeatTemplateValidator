@@ -7,7 +7,7 @@ setuptools.setup(
     name='htv',
     version='0.1.6',
     # scripts=['htv/__main__.py'],
-    author="Floppino",
+    author="floppino",
     author_email="martina.clem@gmail.com",
     description="A Heat Teamplate Validator",
     long_description=long_description,
@@ -21,9 +21,7 @@ setuptools.setup(
     ],
     entry_points={
         'console_scripts': [
-            'htv = htv:validate',
-            'htv-i = htv:install',
-            'htv-s = htv:shadow',
+            'htv = htv.main:main_entry',
         ]},
     install_requires=['yamllint',
                       'cryptography',

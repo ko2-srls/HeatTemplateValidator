@@ -1,41 +1,26 @@
 import os
-import sys
-import subprocess
+import traceback
+from htv.config.keygen import keygen
 
-curr_dir = os.getcwd()
+home = os.environ['HOME']
 
-# Main and sub directories creation
-print("Enter the full path where to install the app: ")
-"""app_path = input()
-if app_path.endswith("/"):
-    app_path = app_path[:-1]
-try:
-    os.chdir(app_path)
-except:
-    print("This is not a valid path")
+def install():
+    app_dir = "{}/htv".format(home)
 
-try:
-    app_dir = "{}/HeatTemplateValidator".format(app_path)
-    os.mkdir(app_dir, 0o777)
-    template_dir = "{}/HeatTemplateValidator/TemplateLocalStorage".format(app_path)
-    os.mkdir(template_dir, 0o777)
-    warn_dir = "{}/HeatTemplateValidator/WarnYamlFiles".format(app_path)
-    os.mkdir(warn_dir, 0o777)
-    err_dir = "{}/HeatTemplateValidator/ErrYamlFiles".format(app_path)
-    os.mkdir(err_dir, 0o777)
-    valid_dir = "{}/HeatTemplateValidator/ValidYamlFiles".format(app_path)
-    os.mkdir(valid_dir, 0o777)
-    log_dir = "{}/HeatTemplateValidator/Log".format(app_path)
-    os.mkdir(log_dir, 0o777)
-except Exception as e:
-    print(e)"""
+    paths = ["/.key", "/TemplateLocalStorage", "/WarnYamlFiles", "/ErrYamlFiles", "/ValidYamlFiles", "/Log", "/rc_files"]
+    # Main and sub directories creation in $HOME
+    try:
+        os.system("mkdir $HOME/htv")
+    except:
+        print(str(traceback.format_exc()))
+        return "An error occurred"
+    for path in paths:
+        try:
+            new_path = "{}{}".format(app_dir, path)
+            os.system("mkdir -p {}".format(new_path))
+        except:
+            print(str(traceback.format_exc()))
+    print("Now move the Heat template files in {0}/TemplateLocalStorage "
+          "and the openrc files (for Openstack authentication) to {0}/rc_files".format(app_dir))
 
-ll = subprocess.run(['ls', '-lart'], stdout=subprocess.PIPE).stdout.decode('utf-8')
-
-cristoddio = subprocess.run(['/Users/pc-ko2/PycharmProjects/MinorTest/HeatTemplateValidator/htv/htvalidator/install.sh'], stdout=subprocess.PIPE).stdout.decode('utf-8')
-
-print(cristoddio)
-
-
-
-
+    keygen()

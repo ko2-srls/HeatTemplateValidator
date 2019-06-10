@@ -6,25 +6,27 @@ from htv.os_utility.miscellanea import printout
 BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
 
 try:
-    # It creates the list of valid files inside the valid directory
-    validfiles = [f for f in listdir("./ValidYamlFiles") if isfile(join("./ValidYamlFiles", f))]
-    # It creates the list of warning files inside the warning directory
-    warnfiles = [f for f in listdir("./WarnYamlFiles") if isfile(join("./WarnYamlFiles", f))]
-    # It creates the list of error files inside the error directory
-    errfiles = [f for f in listdir("./ErrYamlFiles") if isfile(join("./ErrYamlFiles", f))]
-    # It first saves a list of files of the same directory of this file main.py
-    onlyfiles = [f for f in listdir(".") if isfile(join(".", f))]
-    # It then saves a list of only log files out of the previous list
-    onlylog = [f for f in listdir("./Log") if isfile(join("./Log", f)) and f.endswith(".log")]
-
     # It gets the current working directory
     dir_base = os.getcwd()
+    home = os.environ['HOME']
+    app_dir = "{}/htv".format(home)
     # It defines the name of the directories (for valid files and for warning files)
-    pathvalid = dir_base + "/ValidYamlFiles"
-    pathwarn = dir_base + "/WarnYamlFiles"
-    patherr = dir_base + "/ErrYamlFiles"
-    pathfiles = dir_base + "/TemplateLocalStorage"
-    pathlog = dir_base + "/Log"
+    pathvalid = app_dir + "/ValidYamlFiles"
+    pathwarn = app_dir + "/WarnYamlFiles"
+    patherr = app_dir + "/ErrYamlFiles"
+    pathfiles = app_dir + "/TemplateLocalStorage"
+    pathlog = app_dir + "/Log"
+
+    # It creates the list of valid files inside the valid directory
+    validfiles = [f for f in listdir("{}".format(pathvalid)) if isfile(join("{}".format(pathvalid), f))]
+    # It creates the list of warning files inside the warning directory
+    warnfiles = [f for f in listdir("{}".format(pathwarn)) if isfile(join("{}".format(pathwarn), f))]
+    # It creates the list of error files inside the error directory
+    errfiles = [f for f in listdir("{}".format(patherr)) if isfile(join("{}".format(patherr), f))]
+    # It then saves a list of only log files out of the previous list
+    onlylog = [f for f in listdir("{}".format(pathlog)) if isfile(join("{}".format(pathlog), f)) and f.endswith(".log")]
+
+
 
     # It removes the Log files
     for logfile in onlylog:
