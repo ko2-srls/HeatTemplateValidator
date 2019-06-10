@@ -10,7 +10,7 @@ It moves the warning files into the dir *./WarnHeatFiles*.
 It moves the error files into the dir *./ErrorHeatFiles* and for each file of the last two groups it creates a log and then it moves all log files into the dir *./Log*. 
 At the very beginning of the installation HTV will also create crontab lines inside the *list_cron.txt*.
 ### Installation
-HTV requires [python3] and pip in order to run.
+HTV requires [python >=3.5] and pip in order to run.
 Open the terminal and download the application through *git*:
 ```sh
 $ git clone git@github.com:ko2-srls/HeatTemplateValidator.git
