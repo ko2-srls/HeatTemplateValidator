@@ -1,5 +1,5 @@
 # Heat Template Validator
-![N|Solid](https://inizanhugo.files.wordpress.com/2018/11/heat.png?w=800)
+![N|Solid](https://inizanhugo.files.wordpress.com/2018/11/heat.png?w=200)
 
 Heat Template Validator (HTV) is a tool created to validate *.yaml* (Heat) files and check the parameters' existence in the server Openstack. 
 
@@ -56,7 +56,7 @@ To go back to a clean environment use the *goback.py* script:
 $ python goback.py
 ```
 ### Notes
-This application fully functions on Ubuntu with python3 and pip3 installed.
+This application fully functions on Ubuntu and MacOS with python3 and pip3 installed.
 All advice welcome!
 
 
