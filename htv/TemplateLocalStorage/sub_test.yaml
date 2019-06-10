@@ -1,0 +1,36 @@
+heat_template_version: "2018-08-31"
+description: "version 2017-09-01 created by HOT Generator at Mon, 03 Jun 2019 09:30:22 GMT."
+resources:
+  Server_1:
+    type: "OS::Nova::Server"
+    properties:
+      security_groups:
+        - "a700692c-8f2e-47ec-bda5-9bda6bfe0cd7"
+      networks:
+        - subnet: "cfe6800b-a7ee-4206-86b7-381fa977ed88"
+      name: test_server
+      flavor: cirros256
+      image: "3b8023c0-aba4-4a43-9015-3bee66597b4e"
+      availability_zone: nova
+  KeyPair_1:
+    type: "OS::Nova::KeyPair"
+    properties:
+      name: key_test
+      public_key: "\"\""
+  Net_1:
+    type: "OS::Neutron::Net"
+    properties:
+      admin_state_up: true
+      name: rete_test
+      port_security_enabled: true
+  Subnet_1:
+    type: "OS::Neutron::Subnet"
+    properties:
+      name: sub_test
+      network: "c95ab44f-8863-47f7-b4ae-38bb2ab75fd2"
+      ip_version: 4
+      enable_dhcp: true
+outputs:
+  KeyPair_1_private_key:
+    description: "The private_key of KeyPair_1."
+    value: "{ get_attr: [KeyPair_1, private_key] }"

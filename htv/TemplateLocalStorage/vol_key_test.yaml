@@ -1,0 +1,13 @@
+heat_template_version: "2018-08-31"
+description: "version 2017-09-01 created by HOT Generator at Mon, 03 Jun 2019 12:17:43 GMT."
+resources:
+  Server_1:
+    type: "OS::Nova::Server"
+    properties:
+      security_groups:
+        - "a700692c-8f2e-47ec-bda5-9bda6bfe0cd7"
+      name: server_test_vol
+      flavor: ds512M
+      volume: "7133f515-2bb6-47ff-a2e8-aacb32e5ada9"
+      availability_zone: nova
+      key_name: ko2_key2
