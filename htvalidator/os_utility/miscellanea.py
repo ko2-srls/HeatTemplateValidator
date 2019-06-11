@@ -3,6 +3,9 @@ from os.path import isfile, join
 from os import listdir
 import sys
 import os
+import subprocess
+# Encryption utilities imports
+from cryptography.fernet import Fernet
 
 # It saves the current working directory and the home of the user
 dir_base = os.getcwd()
@@ -85,51 +88,166 @@ def ask_openrc():
 #################################################
 #               Arguments parsing               #
 #################################################
+# TODO check if it works with openstack auth
 # It parses and saves the arguments passed with the function validator.py
-def parse_args(arguments):
+def parse_args(arg):
     # It saves all the .sh files corresponding to the admin-openrc.sh files
     onlyfiles = [f for f in listdir("{}/htv/rc_files".format(home)) if isfile(join("{}/htv/rc_files".format(home), f))]
     onlysh = [f for f in onlyfiles if f.endswith(".sh")]
+    # It saves the current working directory
+    curr_dir = os.getcwd()
     shfile = ""
     pwd = None
     shfile = None
-    for arg in arguments:
-        # If openrc is in the args it saves the file name
-        if ".sh" in arg:
-            shfile = arg
-            # If the passwd is in the args it saves it, splits it accordingly and encodes it.
-            if "b'" in arg:
-                pwd = arg.split("'")[1]
-                pwd = pwd.encode()
-            # If the password is not in the args
+    # If the arg is an openrc file:
+    path_to_file = arg
+    with open('{}'.format(path_to_file), 'rt') as F:
+        lines = [line for line in F.readlines() if "export OS_PASSWORD=" in line]
+        if lines:
+            # If the list has been created it splits the line
+            line = lines[0].split("export OS_PASSWORD=")[1]
+            first_character = line[0:1]
+            # It checks if the first character of the pwd is '$', if so the cycle ends
+            if first_character == "$":
+                pwd = ask_pwd(path_to_file)
+            # If not, the pwd is splitted and encoded
             else:
-                if shfile in onlysh:
-                    # It opens the file and uses a list comprehension in order to saves all the lines with OS_PASSWORD
-                    with open('{}/htv/rc_files/{}'.format(home, shfile), 'rt') as F:
-                        lines = [line for line in F.readlines() if "export OS_PASSWORD=" in line]
-                        if lines:
-                            # If the list has been created it splits the line
-                            line = lines[0].split("export OS_PASSWORD=")[1]
-                            first_character = line[0:1]
-                            # It checks if the first character of the pwd is '$', if so the cycle ends
-                            if first_character == "$":
-                                pass
-                            # If not, the pwd is splitted and encoded
-                            else:
-                                pwd = line.split("'")[1]
-                                pwd = pwd.encode()
-                else:
-                    printout(
-                        ">> The selected openrc file is not present in '{}/htv/rc_files' dir. The application will now exit\n".format(
-                            home), RED)
-                    sys.exit()
-        elif "b'" in arg:
+                pwd = line.split("'")[1]
+                pwd = pwd.encode()
+        else:
+            printout(">> This openrc file is not valid. The program will now exit", RED)
+            sys.exit()
+
+    # If openrc is in the args it saves the file name
+    """if ".sh" in arg:
+        shfile = arg
+        # If the passwd is in the args it saves it, splits it accordingly and encodes it.
+        if "b'" in arg:
             pwd = arg.split("'")[1]
             pwd = pwd.encode()
-        # If openrc is not in the args the app'll go in the interactive mode and ask the user to chose an openrc file
+        # If the password is not in the args
         else:
-            pwd, shfile = ask_openrc()
+            if shfile in onlysh:
+                # It opens the file and uses a list comprehension in order to saves all the lines with OS_PASSWORD
+                with open('{}/htv/rc_files/{}'.format(home, shfile), 'rt') as F:
+                    lines = [line for line in F.readlines() if "export OS_PASSWORD=" in line]
+                    if lines:
+                        # If the list has been created it splits the line
+                        line = lines[0].split("export OS_PASSWORD=")[1]
+                        first_character = line[0:1]
+                        # It checks if the first character of the pwd is '$', if so the cycle ends
+                        if first_character == "$":
+                            pass
+                        # If not, the pwd is splitted and encoded
+                        else:
+                            pwd = line.split("'")[1]
+                            pwd = pwd.encode()
+            else:
+                printout(
+                    ">> The selected openrc file is not present in '{}/htv/rc_files' dir. The application will now exit\n".format(
+                        home), RED)
+                sys.exit()
+    elif "b'" in arg:
+        pwd = arg.split("'")[1]
+        pwd = pwd.encode()
+    # If openrc is not in the args the app'll go in the interactive mode and ask the user to chose an openrc file
+    else:
+        pwd, shfile = ask_openrc()"""
     return pwd, shfile
+
+
+#################################################
+#                Ask for password               #
+#################################################
+def ask_pwd(path_to_file):
+    e_key = get_key()
+    shfile = path_to_file.split("/")[-1:][0]
+    # It gets the openstack password in the form of a string, encodes it and encrypts it.
+    printout(">> Enter the Openstack password for the file {}: \n".format(shfile), CYAN)
+    openstack_password = input()
+    passwd = openstack_password.encode()
+    f = Fernet(e_key)
+    encrypted = f.encrypt(passwd)
+    # It creates the variable to insert
+    password_line = "export OS_PASSWORD={}".format(encrypted)
+    # It opens the openrc.sh file and change the PASSWORD line with the new encrypted password
+    with open("{}".format(path_to_file), 'r+') as F:
+        lines = F.readlines()
+        F.seek(0)
+        for line in lines:
+            # If 'OS_PASSWORD' is not in the line, it re-writes the line to the file
+            if "export OS_PASSWORD=" not in line:
+                F.write(line)
+        # At the end it appends the new line with the saved password
+        F.write("\n{}".format(password_line))
+    return encrypted
+
+
+#################################################
+#               Get various values              #
+#################################################
+def get_key():
+    with open('{}/htv/key.key'.format(home), 'r') as F:
+        e_key = F.read()
+    return e_key
+
+
+def get_htv_path():
+    venv_path = subprocess.run(["which", "htv"], stdout=subprocess.PIPE).stdout.decode('utf-8')
+    venv_path = venv_path[:-3]
+    return venv_path
+
+
+def empty_cron():
+    with open('{}/htv/list_cron.txt'.format(home), 'w') as F:
+        F.write("")
+
+
+def get_shfiles():
+    try:
+        onlyfiles = [f for f in listdir("{}/htv/rc_files".format(home)) if
+                     isfile(join("{}/htv/rc_files".format(home), f))]
+        onlysh = [f for f in onlyfiles if f.endswith(".sh")]
+    except:
+        printout(">> There are no openrc files in {}/htv/rc_files! The program will now exit\n", RED)
+        sys.exit()
+    return onlysh
+
+
+def get_yaml():
+    try:
+        # It first saves a list of files of the directory "./TemplateLocalStorage"
+        onlyfiles = [f for f in listdir("{}/htv/TemplateLocalStorage".format(home)) if
+                     isfile(join("{}/htv/TemplateLocalStorage".format(home), f))]
+        # It then saves a list of only YAML files
+        onlyyaml = [f for f in onlyfiles if f.endswith(".yaml")]
+    except:
+        printout(">> There are no YAML files in {}/htv/TemplateLocalStorage! The program will now exit\n", RED)
+        sys.exit()
+    return onlyyaml
+
+
+def get_saved_pwd(shfile):
+    with open("{0}/htv/rc_files/{1}".format(home, shfile), 'rt') as F:
+        data = F.readlines()
+        passwd = ""
+        for line in data:
+            # For every line it checks if OS_PASSWORD is in it and if so it saves the pwd
+            if "export OS_PASSWORD=" in line:
+                passwd = line.split("export OS_PASSWORD=")[1]
+    return passwd
+
+
+def write_pwd(password_line, path_to_file):
+    with open("{}".format(path_to_file), 'r+') as F:
+        lines = F.readlines()
+        F.seek(0)
+        for line in lines:
+            # If 'OS_PASSWORD' is not in the line, it re-writes the line to the file
+            if "export OS_PASSWORD=" not in line:
+                F.write(line)
+        # At the end it appends the new line with the saved password
+        F.write("\n{}".format(password_line))
 
 
 #################################################

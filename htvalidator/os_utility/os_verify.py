@@ -8,7 +8,6 @@ BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
 
 # TODO get defaults parameters via openstack clients
 
-
 def take_config(client):
     clients = config()
     if client == "glance":

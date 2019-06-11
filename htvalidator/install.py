@@ -22,7 +22,6 @@ def install():
             os.system("mkdir -p {}".format(new_path))
         except:
             pass
-
     printout(">> The directory, and relative subdirs, has been created: {0}/\n\n".format(app_dir), CYAN)
     printout(">> Now move the Heat template files in {0}/TemplateLocalStorage "
              "and the openrc files (for Openstack authentication) to {0}/rc_files\n\n".format(app_dir), CYAN)

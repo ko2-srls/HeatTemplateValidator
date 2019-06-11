@@ -30,7 +30,6 @@ def keygen():
     e_key = base64.urlsafe_b64encode(kdf.derive(key))
 
     # It saves the encryption key for the auth_config file
-    file = open('{}/htv/key.key'.format(home), 'wb')
-    file.write(e_key)
-    file.close()
+    with open('{}/htv/key.key'.format(home), 'wb') as F:
+        F.write(e_key)
     return e_key

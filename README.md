@@ -37,7 +37,7 @@ $ htv
 In the interactive mode the application will ask for which openrc file to use for the Openstack.
 After this you are ready to go, the files will be moved accordingly with their warnings or errors and logs will be created and moved to the */htv//Log* dir.
 ### Remember
-Whenever you want to use *htv* you first need to move the yaml files to the */htv/TemplateLocalStorage* fir.
+Whenever you want to use *htv* you first need to move the yaml files to the */htv/TemplateLocalStorage* dir.
 ### In case the application directory changes
 In case you move the HeatTemplateValidator directory to a different path it is necessary to do as follows:
 ```sh

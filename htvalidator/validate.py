@@ -15,7 +15,7 @@ from htvalidator.os_utility.os_parser import get_images, get_flavors, get_secgro
 from htvalidator.os_utility.os_verify import verify_images, verify_secgroups, verify_flavors, verify_networks, \
     verify_ports, \
     verify_keypairs, verify_volumes
-from htvalidator.os_utility.miscellanea import printout
+from htvalidator.os_utility.miscellanea import printout, get_yaml
 
 BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
 home = os.environ['HOME']
@@ -27,14 +27,8 @@ def validate_template():
     ##################################################################
     # It sets the date to the current day, the log will refer to this date when the script will be executed
     today = (str(datetime.datetime.now())).split(" ")[0]
-    # It first saves a list of files of the directory "./TemplateLocalStorage"
-    onlyfiles = [f for f in listdir("{}/htv/TemplateLocalStorage".format(home)) if
-                 isfile(join("{}/htv/TemplateLocalStorage".format(home), f))]
-    # It then saves a list of only YAML files
-    onlyyaml = [f for f in onlyfiles if f.endswith(".yaml")]
-    # If there are no yaml file the program will stop
-    if not onlyyaml:
-        printout(">> There are no YAML files in {}/htv/TemplateLocalStorage! The program will now exit\n", RED)
+    # It gets the files of the directory "./TemplateLocalStorage"
+    onlyyaml = get_yaml()
     # It gets the current working directory
     dir_base = os.getcwd()
     app_dir = "{}/htv".format(home)
@@ -170,12 +164,10 @@ def validate_template():
                         print(e)
 
             # if the file has errors it is saved in ./ErrorsYamlFiles and a log is created
-            except Exception as e:
+            except:
                 # If there is an exception it will be saved into the Log file
                 with open("{0}/{1}-{2}-error.log".format(pathlog, filename, today), 'a+') as output:
                     output.write("{}\n".format(str(traceback.format_exc())))
                 printout("     Invalid YAML file\n", RED)
                 os.rename("{}/{}".format(pathfiles, yamlfile), "{}/{}".format(patherr, yamlfile))
-
-    if onlyyaml:
-        printout("\n>> All files have been analyzed\n", CYAN)
+    printout("\n>> All files have been analyzed\n", CYAN)

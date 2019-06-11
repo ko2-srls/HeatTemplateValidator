@@ -3,10 +3,11 @@ import sys
 from htvalidator.install import install
 from htvalidator.shadow import shadow
 from htvalidator.validate import validate_template
+from htvalidator.config.auth_config import config
 from htvalidator.os_utility.miscellanea import printout
 
 BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
-
+#TODO accept multiple args (openrc and passwd)
 
 def entry():
     if len(sys.argv) > 1:
@@ -17,6 +18,9 @@ def entry():
                 install()
             elif "--shadow" in arg or "-s" in arg:
                 shadow()
+            elif ".sh" in arg:
+                config(arg)
+                validate_template()
             else:
                 printout(">> Wrong option\n", RED)
     else:
