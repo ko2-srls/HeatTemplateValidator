@@ -5,23 +5,7 @@ from htvalidator.os_utility.miscellanea import get_param, printout
 
 BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
 
-
 # TODO get defaults parameters via openstack clients
-
-def take_config(client):
-    clients = config()
-    if client == "glance":
-        return clients[0]
-    if client == "nova":
-        return clients[1]
-    if client == "neutron":
-        return clients[2]
-    if client == "cinder":
-        return clients[3]
-    if client == "keystone":
-        return clients[4]
-
-
 """ All these functions verifies the parameters existence (image, flavor, security group, key pair, network, volume, 
 port inside the openstack server """
 
@@ -29,9 +13,9 @@ port inside the openstack server """
 #################################################
 #              Verify GLANCE images             #
 #################################################
-def verify_images(images, doc, yamlfile):
+def verify_images(images, doc, yamlfile, clients):
     print(">> Verifying the image existence...")
-    glance = take_config("glance")
+    glance = clients[0]
     # It executes a call via glance client to get all the images [images are Image class objects]
     images_list = glance.images.list()
     search_by_id = []
@@ -66,8 +50,8 @@ def verify_images(images, doc, yamlfile):
 #################################################
 #              Verify NOVA flavors              #
 #################################################
-def verify_flavors(flavors, doc, yamlfile):
-    nova = take_config("nova")
+def verify_flavors(flavors, doc, yamlfile, clients):
+    nova = clients[1]
     # It saves the list of flavors of the openstack server [flavors are Flavor class objects]
     flavors_list = nova.flavors.list()
     search_by_id = []
@@ -103,9 +87,9 @@ def verify_flavors(flavors, doc, yamlfile):
 #################################################
 #        Verify NEUTRON security groups         #
 #################################################
-def verify_secgroups(sec_groups, doc, yamlfile):
+def verify_secgroups(sec_groups, doc, yamlfile, clients):
     print(">> Verifying the security group existence...")
-    neutron = take_config("neutron")
+    neutron = clients[2]
     # It saves the list of security groups of our openstack [security groups are dicts]
     security_list = neutron.list_security_groups()
     security_id_list = []
@@ -143,9 +127,9 @@ def verify_secgroups(sec_groups, doc, yamlfile):
 #################################################
 #             Verify NEUTRON networks           #
 #################################################
-def verify_networks(networks, doc, yamlfile):
+def verify_networks(networks, doc, yamlfile, clients):
     print(">> Verifying the networks existence...")
-    neutron = take_config("neutron")
+    neutron = clients[2]
     for network in networks:
         if type(network) == str:
             # If the network is a str and the neutron.list_networks() function works then the network exists
@@ -236,9 +220,9 @@ def verify_networks(networks, doc, yamlfile):
 #################################################
 #              Verify NEUTRON ports             #
 #################################################
-def verify_ports(ports, doc, yamlfile):
+def verify_ports(ports, doc, yamlfile, clients):
     print(">> Verifying the ports existence...")
-    neutron = take_config("neutron")
+    neutron = clients[2]
     # For every port in the ports list it checks for its existence
     for port in ports:
         if type(port) == str:
@@ -270,9 +254,9 @@ def verify_ports(ports, doc, yamlfile):
 #################################################
 #             Verify NOVA key pairs             #
 #################################################
-def verify_keypairs(keypairs, doc, yamlfile):
+def verify_keypairs(keypairs, doc, yamlfile, clients):
     print(">> Verifying the keypairs existence...")
-    nova = take_config("nova")
+    nova = clients[1]
     # It gets all the keypairs through the function nova.keypairs.list()
     keypairs_list = nova.keypairs.list()
     search_by_id = []
@@ -308,9 +292,9 @@ def verify_keypairs(keypairs, doc, yamlfile):
 #################################################
 #             Verify CINDER volumes             #
 #################################################
-def verify_volumes(volumes, doc, yamlfile):
+def verify_volumes(volumes, doc, yamlfile, clients):
     print(">> Verifying the volumes existence...")
-    cinder = take_config("cinder")
+    cinder = clients[3]
     # It gets all the volumes through the function cinder.volume.list()
     volumes_list = cinder.volumes.list()
     search_by_id = []

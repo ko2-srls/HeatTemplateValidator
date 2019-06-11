@@ -1,6 +1,4 @@
 # System imports
-from os.path import isfile, join
-from os import listdir
 import os
 import sys
 # Openstack clients imports
@@ -20,72 +18,40 @@ BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
 home = os.environ['HOME']
 
 
-def config(arg):
-    try:
-        # It saves all the .sh files corresponding to the admin-openrc.sh files
-        onlysh = get_shfiles()
-    except:
-        printout(">> The selected openrc file is not present in '{}/htv/rc_files' dir. "
-                 "The application will now exit\n".format(home), RED)
-        sys.exit()
-
-    onlyyaml = get_yaml()
-    #################################################
-    #           Interactive mode or not?            #
-    #################################################
-    if onlyyaml:
-        # No Interactive
-        if arg:
-            # It calls the fun parse_args in order to save the various args
-            pwd, shfile = parse_args(arg)
-        # Interactive
-        else:
-            # It calls the funct ask_openrc to ask the operator which openrc file he wants to use for the authentication
-            pwd, shfile = ask_openrc()
-    else:
-        printout(">> There are no YAML files in here! Move at least one Heat template in {}/htv/TemplateLocalStorage. "
-                 "The program will now exit\n".format(home), RED)
-        sys.exit()
+def config(pwd, path_to_file):
     #################################################
     #        Authentication info collection         #
     #################################################
-    # If the chosen shfile is present in the onlysh list it saves the various variables
-    if shfile in onlysh:
-        # It opens the chosen file as F
-        with open("{}/htv/rc_files/{}".format(home, shfile), 'rt') as F:
-            # It read the file line by line
-            lines = F.readlines()
-            # It declares an empty dict for the authentication info
-            auth_dict = {}
-            for line in lines:
-                # For every line if "export" is in it it saves the line differentiating between key and value
-                if "export" in line:
-                    splitted_line = line.split("export ")[1]
-                    # If the password is present it saves it and split it accordingly
-                    if "export OS_PASSWORD=" in line:
-                        key = "OS_PASSWORD"
-                        try:
-                            value = line.split("'")[1]
-                            auth_dict[key] = value
-                        except:
-                            printout(
-                                ">> Run 'htv -s' or 'htv --shadow' first because the application requires the openstack"
-                                " password in order to run\n", CYAN)
-                            sys.exit()
-                    # For all the other values it just splits it by "=" and add the keys, values to the auth dict
-                    else:
-                        key = splitted_line.split("=")[0]
-                        value = splitted_line.split("=")[1]
+    # It opens the chosen file as F
+    with open("{}".format(path_to_file), 'rt') as F:
+        # It read the file line by line
+        lines = F.readlines()
+        # It declares an empty dict for the authentication info
+        auth_dict = {}
+        for line in lines:
+            # For every line if "export" is in it it saves the line differentiating between key and value
+            if "export" in line:
+                splitted_line = line.split("export ")[1]
+                # If the password is present it saves it and split it accordingly
+                if "export OS_PASSWORD=" in line:
+                    key = "OS_PASSWORD"
+                    try:
+                        value = line.split("'")[1]
                         auth_dict[key] = value
-                    # It deletes the '\n' and the ' " '
-                    for key, value in auth_dict.items():
-                        value = value.strip('\n').replace('"', '')
-                        auth_dict[key] = value
-    # If the shfile is not present in the list the program exits
-    else:
-        printout(">> The selected openrc file is not present in '{}/htv/rc_files' dir. "
-                 "The application will now exit\n".format(home), RED)
-        sys.exit()
+                    except:
+                        printout(
+                            ">> Run 'htv -s' or 'htv --shadow' first because the application requires the openstack"
+                            " password in order to run\n", CYAN)
+                        sys.exit()
+                # For all the other values it just splits it by "=" and add the keys, values to the auth dict
+                else:
+                    key = splitted_line.split("=")[0]
+                    value = splitted_line.split("=")[1]
+                    auth_dict[key] = value
+                # It deletes the '\n' and the ' " '
+                for key, value in auth_dict.items():
+                    value = value.strip('\n').replace('"', '')
+                    auth_dict[key] = value
     # It changes and saves these variables that can be different depending on the openrc version (V3 or V2)
     if 'USER_DOMAIN_NAME' not in auth_dict:
         auth_dict['USER_DOMAIN_NAME'] = "Default"

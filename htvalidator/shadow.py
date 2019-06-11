@@ -49,9 +49,9 @@ def shadow():
             write_pwd(password_line, path_to_file)
             # It generates the crontab for each openrc file and for each password
             cron_gen(pwd, shfile)
-            printout(">> Passwords have been correctly saved, now you can use 'htv'\n", CYAN)
-            printout(">> Remember to move the Heat templates to '{}/htv/TemplateLocalStorage' "
-                     "everytime you want to use 'htv'\n".format(home), CYAN)
+        printout(">> Passwords have been correctly saved, now you can use 'htv'\n", CYAN)
+        printout(">> Remember to move the Heat templates to '{}/htv/TemplateLocalStorage' "
+                 "everytime you want to use 'htv'\n".format(home), CYAN)
     else:
         printout(">> There are no openrc files in '{}/htv/rc_files' dir. The application will now exit\n".format(home),
                  RED)

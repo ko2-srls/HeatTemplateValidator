@@ -1,5 +1,4 @@
 import os
-import traceback
 from htvalidator.config.keygen import keygen
 from htvalidator.os_utility.miscellanea import printout
 
@@ -12,14 +11,11 @@ def install():
     paths = ["/.key", "/TemplateLocalStorage", "/WarnYamlFiles", "/ErrYamlFiles", "/ValidYamlFiles", "/Log",
              "/rc_files"]
     # Main and sub directories creation in $HOME
-    try:
-        os.system("mkdir $HOME/htv")
-    except:
-        return "An error occurred"
     for path in paths:
         try:
+            os.system("mkdir $HOME/htv >/dev/null 2>&1")
             new_path = "{}{}".format(app_dir, path)
-            os.system("mkdir -p {}".format(new_path))
+            os.system("mkdir -p {} >/dev/null 2>&1".format(new_path))
         except:
             pass
     printout(">> The directory, and relative subdirs, has been created: {0}/\n\n".format(app_dir), CYAN)

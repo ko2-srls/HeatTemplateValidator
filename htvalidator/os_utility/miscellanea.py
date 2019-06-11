@@ -13,6 +13,21 @@ home = os.environ['HOME']
 
 
 #################################################
+#              Interactive or not?              #
+#################################################
+def interactive():
+    # It calls the funct ask_openrc to ask the operator which openrc file he wants to use for the authentication
+    pwd, path_to_file = ask_openrc()
+    return pwd, path_to_file
+
+
+def no_interactive(arg):
+    # It calls the fun parse_args in order to save the various args
+    pwd, path_to_file = parse_args(arg)
+    return pwd, path_to_file
+
+
+#################################################
 #              Get PARAMETERS values            #
 #################################################
 # It cycles the document in order to find the given parameter
@@ -41,8 +56,7 @@ def get_param(param, doc):
                         pass
             # If k is "get_resource" it returns a message
             elif k == "get_resource":
-                result = {"message":
-                              "     The parameter will be allocated automatically through another resource"}
+                result = {"message": "     The parameter will be allocated automatically through another resource"}
             else:
                 pass
     if not result:
@@ -56,33 +70,26 @@ def get_param(param, doc):
 # Function that asks the user to choose an openrc file form the given list
 def ask_openrc():
     # It saves all the .sh files corresponding to the admin-openrc.sh files
-    onlyfiles = [f for f in listdir("{}/htv/rc_files".format(home)) if isfile(join("{}/htv/rc_files".format(home), f))]
-    onlysh = [f for f in onlyfiles if f.endswith(".sh")]
-    shfile = ""
+    onlysh = get_shfiles()
     pwd = None
-    shfile = None
     number = 1
     # For every file it prints the name with the corresponding number in the list
-    if onlysh:
-        printout(">> Choose the openrc.sh you prefer: \n", CYAN)
-        for F in onlysh:
-            print("{} - {}".format(number, F))
-            number += 1
-        # It saves the user's input choice of the admin-openrc.sh file
-        printout("\n>> Type the corresponding number and press enter: \n", CYAN)
-        choice = input()
-        # It converts from string to int
-        value = int(choice)
-        try:
-            # It saves the file from the list depending ont he chosen option
-            shfile = onlysh[value - 1]
-        except Exception as e:
-            print(e)
-    else:
-        printout(">> There are no openrc files in '{}/htv/rc_files' dir. The application will now exit\n".format(home),
-                 RED)
-        sys.exit()
-    return pwd, shfile
+    printout(">> Choose the openrc.sh you prefer: \n", CYAN)
+    for F in onlysh:
+        print("{} - {}".format(number, F))
+        number += 1
+    # It saves the user's input choice of the admin-openrc.sh file
+    printout("\n>> Type the corresponding number and press enter: \n", CYAN)
+    choice = input()
+    # It converts from string to int
+    value = int(choice)
+    try:
+        # It saves the file from the list depending ont he chosen option
+        shfile = onlysh[value - 1]
+        path_to_file = "{}/htv/rc_files/{}".format(home, shfile)
+        return pwd, path_to_file
+    except:
+        printout(">> Wrong input", RED)
 
 
 #################################################
@@ -91,16 +98,9 @@ def ask_openrc():
 # TODO check if it works with openstack auth
 # It parses and saves the arguments passed with the function validator.py
 def parse_args(arg):
-    # It saves all the .sh files corresponding to the admin-openrc.sh files
-    onlyfiles = [f for f in listdir("{}/htv/rc_files".format(home)) if isfile(join("{}/htv/rc_files".format(home), f))]
-    onlysh = [f for f in onlyfiles if f.endswith(".sh")]
-    # It saves the current working directory
-    curr_dir = os.getcwd()
-    shfile = ""
-    pwd = None
-    shfile = None
-    # If the arg is an openrc file:
     path_to_file = arg
+    shfile = path_to_file.split("/")[-1:][0]
+    # If the arg is an openrc file:
     with open('{}'.format(path_to_file), 'rt') as F:
         lines = [line for line in F.readlines() if "export OS_PASSWORD=" in line]
         if lines:
@@ -153,7 +153,7 @@ def parse_args(arg):
     # If openrc is not in the args the app'll go in the interactive mode and ask the user to chose an openrc file
     else:
         pwd, shfile = ask_openrc()"""
-    return pwd, shfile
+    return pwd, path_to_file
 
 
 #################################################
@@ -208,10 +208,13 @@ def get_shfiles():
         onlyfiles = [f for f in listdir("{}/htv/rc_files".format(home)) if
                      isfile(join("{}/htv/rc_files".format(home), f))]
         onlysh = [f for f in onlyfiles if f.endswith(".sh")]
+        if onlysh:
+            return onlysh
     except:
-        printout(">> There are no openrc files in {}/htv/rc_files! The program will now exit\n", RED)
+        printout(">> There are no openrc files in {}/htv/rc_files! The program will now exit\n".format(home), RED)
         sys.exit()
-    return onlysh
+    printout(">> There are no openrc files in {}/htv/rc_files! The program will now exit\n".format(home), RED)
+    sys.exit()
 
 
 def get_yaml():
@@ -221,16 +224,19 @@ def get_yaml():
                      isfile(join("{}/htv/TemplateLocalStorage".format(home), f))]
         # It then saves a list of only YAML files
         onlyyaml = [f for f in onlyfiles if f.endswith(".yaml")]
+        if onlyyaml:
+            return onlyyaml
     except:
-        printout(">> There are no YAML files in {}/htv/TemplateLocalStorage! The program will now exit\n", RED)
+        printout(">> There are no YAML files in {}/htv/TemplateLocalStorage! The program will now exit\n".format(home),
+                 RED)
         sys.exit()
-    return onlyyaml
+    printout(">> There are no YAML files in {}/htv/TemplateLocalStorage! The program will now exit\n".format(home), RED)
+    sys.exit()
 
 
 def get_saved_pwd(shfile):
     with open("{0}/htv/rc_files/{1}".format(home, shfile), 'rt') as F:
         data = F.readlines()
-        passwd = ""
         for line in data:
             # For every line it checks if OS_PASSWORD is in it and if so it saves the pwd
             if "export OS_PASSWORD=" in line:
