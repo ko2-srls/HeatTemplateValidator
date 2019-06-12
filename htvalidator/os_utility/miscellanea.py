@@ -71,7 +71,7 @@ def get_param(param, doc):
 def ask_openrc():
     # It saves all the .sh files corresponding to the admin-openrc.sh files
     onlysh = get_shfiles()
-    pwd = None
+    pwd = ""
     number = 1
     # For every file it prints the name with the corresponding number in the list
     print(">> Choose the openrc.sh you prefer: ")
@@ -88,7 +88,8 @@ def ask_openrc():
         path_to_file = "{}/htv/rc_files/{}".format(home, shfile)
         return pwd, path_to_file
     except:
-        printout(">> Wrong input", RED)
+        printout(">> Wrong input, the program will now exit\n", RED)
+        sys.exit()
 
 
 #################################################
