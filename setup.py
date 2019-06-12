@@ -5,7 +5,7 @@ with open("./README.md", "r") as fh:
 
 setuptools.setup(
     name='htv',
-    version='0.1.6',
+    version='0.1.8',
     author="floppino",
     author_email="martina.clem@gmail.com",
     description="A Heat Teamplate Validator",

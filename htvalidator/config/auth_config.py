@@ -12,7 +12,8 @@ from cinderclient import client as cinclient
 # Encryption utilities imports
 from cryptography.fernet import Fernet
 # Utilities imports
-from htvalidator.os_utility.miscellanea import get_yaml, get_shfiles, get_key, ask_openrc, parse_args, printout
+from htvalidator.config.keygen import keygen
+from htvalidator.os_utility.miscellanea import write_pwd, get_key, printout
 
 BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
 home = os.environ['HOME']
@@ -39,9 +40,9 @@ def config(pwd, path_to_file):
                         value = line.split("'")[1]
                         auth_dict[key] = value
                     except:
-                        printout(
+                        print(
                             ">> Run 'htv -s' or 'htv --shadow' first because the application requires the openstack"
-                            " password in order to run\n", CYAN)
+                            " password in order to run")
                         sys.exit()
                 # For all the other values it just splits it by "=" and add the keys, values to the auth dict
                 else:
@@ -70,10 +71,20 @@ def config(pwd, path_to_file):
     # It takes the password variable from the auth_dict or from 'pwd' variable if it exists
     password = pwd if pwd else (auth_dict['OS_PASSWORD']).encode()
     # It decrypts it using the key
-    decrypted_pwd = fernet.decrypt(password)
-    decrypted = decrypted_pwd.decode()
+    try:
+        decrypted_pwd = fernet.decrypt(password)
+        password = decrypted_pwd.decode()
+    except:
+        keygen()
+        password = input(">> Insert the password for the openrc file '{}': ".format(path_to_file))
+        pwd = password.encode()
+        e_key = get_key()
+        fernet = Fernet(e_key)
+        pwd = fernet.encrypt(pwd)
+        password_line = "export OS_PASSWORD={}".format(pwd)
+        write_pwd(password_line, path_to_file)
     # It saves the decrypted openstack password
-    auth_dict['OS_PASSWORD'] = decrypted
+    auth_dict['OS_PASSWORD'] = password
 
     #################################################
     #                Authentication                 #

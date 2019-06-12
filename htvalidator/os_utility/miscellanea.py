@@ -74,13 +74,12 @@ def ask_openrc():
     pwd = None
     number = 1
     # For every file it prints the name with the corresponding number in the list
-    printout(">> Choose the openrc.sh you prefer: \n", CYAN)
+    print(">> Choose the openrc.sh you prefer: ")
     for F in onlysh:
         print("{} - {}".format(number, F))
         number += 1
     # It saves the user's input choice of the admin-openrc.sh file
-    printout("\n>> Type the corresponding number and press enter: \n", CYAN)
-    choice = input()
+    choice = input(">> Type the corresponding number and press enter: ")
     # It converts from string to int
     value = int(choice)
     try:
@@ -163,11 +162,10 @@ def ask_pwd(path_to_file):
     e_key = get_key()
     shfile = path_to_file.split("/")[-1:][0]
     # It gets the openstack password in the form of a string, encodes it and encrypts it.
-    printout(">> Enter the Openstack password for the file {}: \n".format(shfile), CYAN)
-    openstack_password = input()
-    passwd = openstack_password.encode()
+    openstack_password = input(">> Enter the Openstack password for the file {}: ".format(shfile))
+    pwd = openstack_password.encode()
     f = Fernet(e_key)
-    encrypted = f.encrypt(passwd)
+    encrypted = f.encrypt(pwd)
     # It creates the variable to insert
     password_line = "export OS_PASSWORD={}".format(encrypted)
     # It opens the openrc.sh file and change the PASSWORD line with the new encrypted password
@@ -180,7 +178,7 @@ def ask_pwd(path_to_file):
                 F.write(line)
         # At the end it appends the new line with the saved password
         F.write("\n{}".format(password_line))
-    return encrypted
+    return pwd
 
 
 #################################################

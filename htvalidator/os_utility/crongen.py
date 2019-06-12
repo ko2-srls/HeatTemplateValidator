@@ -43,9 +43,9 @@ def cron_gen_nopwd():
             passwd = passwd.split("'")[1]
         # If it does not succeed it means there is no encoded password but just the old input variable from the openrc f
         except:
-            printout(""">> Run 'htv -s' or 'htv --shadow' first to insert the Openstack password\n""", CYAN)
+            print(">> Run 'htv -s' or 'htv --shadow' first to insert the Openstack password")
             sys.exit()
         # It encodes the password
         pwd = passwd.encode()
         cron_gen(pwd, shfile)
-    printout(">> Crontabs have been correctly updated\n", CYAN)
+    print(">> Crontabs have been correctly updated")

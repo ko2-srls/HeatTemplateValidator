@@ -37,8 +37,7 @@ def shadow():
     if onlysh:
         for shfile in onlysh:
             # It gets the openstack password in the form of a string, encodes it and encrypts it.
-            printout(">> Enter the Openstack password for the file {}: \n".format(shfile), CYAN)
-            openstack_password = input()
+            openstack_password = input(">> Enter the Openstack password for the file {}: ".format(shfile))
             passwd = openstack_password.encode()
             f = Fernet(e_key)
             pwd = f.encrypt(passwd)
@@ -49,9 +48,9 @@ def shadow():
             write_pwd(password_line, path_to_file)
             # It generates the crontab for each openrc file and for each password
             cron_gen(pwd, shfile)
-        printout(">> Passwords have been correctly saved, now you can use 'htv'\n", CYAN)
-        printout(">> Remember to move the Heat templates to '{}/htv/TemplateLocalStorage' "
-                 "everytime you want to use 'htv'\n".format(home), CYAN)
+        print(">> Passwords have been correctly saved, now you can use 'htv'")
+        print(">> Remember to move the Heat templates to '{}/htv/TemplateLocalStorage' "
+              "everytime you want to use 'htv'".format(home))
     else:
         printout(">> There are no openrc files in '{}/htv/rc_files' dir. The application will now exit\n".format(home),
                  RED)

@@ -36,7 +36,7 @@ def validate_template(clients):
     ##################################################################
     # For every YAML file in onlyyalm list it will examine the file
     for yamlfile in onlyyaml:
-        printout("\n\n>>> Examination of \"{}\" <<<\n".format(yamlfile), CYAN)
+        print("\n>>> Examination of '{}' <<<".format(yamlfile))
         # It saves the name of the file
         filename = yamlfile.split('.')[0]
         # It uses the file into the open function
@@ -81,4 +81,4 @@ def validate_template(clients):
                     output.write("{}\n".format(str(traceback.format_exc())))
                 printout("     Invalid YAML file\n", RED)
                 os.rename("{}/{}".format(pathfiles, yamlfile), "{}/{}".format(patherr, yamlfile))
-    printout("\n>> All files have been analyzed\n", CYAN)
+    print("\n>> All files have been analyzed")
