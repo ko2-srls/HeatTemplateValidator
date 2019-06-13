@@ -1,9 +1,0 @@
-﻿heat_template_version: "2018-08-31"
-description: "version 2017-09-01 created by HOT Generator at Wed, 22 May 2019 16:08:50 GMT."
-resources: 
-  Server_1: 
-    type: "OS::Nova::Server"
-    properties: 
-      name: test1
-      flavor: "m1.tiny"
-      image: "67107850-4ec7-4100-ae22-998dd4a96e95"

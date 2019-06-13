@@ -36,7 +36,7 @@ def validate_template(clients):
     ##################################################################
     # For every YAML file in onlyyalm list it will examine the file
     for yamlfile in onlyyaml:
-        print("\n>>> Examination of '{}' <<<".format(yamlfile))
+        print("\n>>> Analysing of '{}' <<<".format(yamlfile))
         # It saves the name of the file
         filename = yamlfile.split('.')[0]
         # It uses the file into the open function
@@ -47,7 +47,7 @@ def validate_template(clients):
             try:
                 # It checks if the file is a valid yaml file
                 doc = yaml.safe_load(data)
-                printout("     Valid YAML file for yaml module\n", GREEN)
+                printout("     Valid Heat template for yaml module\n", GREEN)
                 conf = YamlLintConfig('extends: default')
                 # It saves warnings if there are any
                 gen = linter.run(data, conf)
@@ -79,6 +79,6 @@ def validate_template(clients):
                 # If there is an exception it will be saved into the Log file
                 with open("{0}/{1}-{2}-error.log".format(pathlog, filename, today), 'a+') as output:
                     output.write("{}\n".format(str(traceback.format_exc())))
-                printout("     Invalid YAML file\n", RED)
+                printout("     Invalid Heat template for yaml module\n", RED)
                 os.rename("{}/{}".format(pathfiles, yamlfile), "{}/{}".format(patherr, yamlfile))
     print("\n>> All files have been analyzed")

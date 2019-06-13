@@ -13,6 +13,7 @@ home = os.environ['HOME']
 #################################################
 #               Crontab generator               #
 #################################################
+# It generates the crontabs with the given environment path, password and openrc.sh file
 def cron_gen(pwd, shfile):
     venv_path = get_htv_path()
     crontabs = []
@@ -20,7 +21,7 @@ def cron_gen(pwd, shfile):
                                                                                              pwd, shfile)
     # It adds the crontab to the list 'crontabs'
     crontabs.append(crontab)
-    # For every item in the list crontabs it saves the item into the file
+    # For every item in the list crontabs it saves (append) the item into the file
     for cron in crontabs:
         with open('{}/htv/list_cron.txt'.format(home), 'a+') as F:
             F.write("{}\n".format(cron))
@@ -29,7 +30,7 @@ def cron_gen(pwd, shfile):
 #################################################
 #              Password collection              #
 #################################################
-# It saves the password from the openrc files and creates the crontabs
+# It saves the password from the openrc.sh files and creates the crontabs
 def cron_gen_nopwd():
     # It deletes list_cron.txt
     empty_cron()

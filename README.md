@@ -31,11 +31,12 @@ Then the application will prompt you the Openstack server password.
 Remember to enter this command only once: during the HTV installation, or everytime you need to change the Openstack passwords or *openrc.hs* files.
 The *htv -s* command will also generate a list of crontabs in the *list_cron.txt* file that you can use in your system crontab file depending on which *openrc.sh* file is needed.
 ### Usage
-You can choose to run the application using the crontabs created or to run it no-interactively via *htv*:
+You can choose to run the application using the crontabs created in *list_cron.txt*.
+Or to run it no-interactively via *htv*:
 ```sh
 $ htv
 ```
-In the interactive mode the application will ask for which openrc file to use for the Openstack:
+Or in the interactive mode where the application will ask for which openrc file to use for the Openstack authentication:
 ```sh
 $ htv /Path/To/The/Openrc/File.sh
 ```
@@ -50,7 +51,7 @@ $ htv -s
 ```
 This is a requirement in order to generate the new crontabs and having the whole application working.
 ### Notes
-This application fully functions on Ubuntu and MacOS with *python3* and *pip3* installed.
+This application fully functions on Ubuntu and MacOS with *python3*, *pip* and *python-dev* installed.
 All advice welcome!
 
 

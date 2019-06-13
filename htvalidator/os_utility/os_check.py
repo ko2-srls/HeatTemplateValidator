@@ -10,6 +10,7 @@ from htvalidator.os_utility.os_verify import verify_images, verify_secgroups, ve
 #################################################
 #             Check openstack items             #
 #################################################
+# It checks for every openstack item (images, flavors etc) if the value exists in the openstack database
 def check_openstack(doc, yamlfile, clients):
     images = []
     flavors = []

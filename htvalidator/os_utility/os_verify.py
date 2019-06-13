@@ -1,12 +1,10 @@
-# Openstack clients imports
-from htvalidator.config.auth_config import config
 # Miscellanea imports
 from htvalidator.os_utility.miscellanea import get_param, printout
 
 BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
 
 # TODO get defaults parameters via openstack clients
-""" All these functions verifies the parameters existence (image, flavor, security group, key pair, network, volume, 
+""" All these functions verify the parameters existence (image, flavor, security group, key pair, network, volume, 
 port inside the openstack server """
 
 
@@ -33,10 +31,10 @@ def verify_images(images, doc, yamlfile, clients):
                 printout("     The image '{}' used in the template '{}' exists\n".format(image, yamlfile), GREEN)
             else:
                 printout("     The image '{}' used in the template '{}' does not exist\n".format(image, yamlfile), RED)
-        # If the image is a dictionary it means the parameter has to be found in the parameters or resources of the template
+        # If the image is a dict it means the parameter has to be found in the parameters or resources of the template
         else:
             image = get_param(image, doc)
-            # If the return from the function is a dict it means the parameter has not be found/it will be allocated automatically
+            # If image is a dict it means the parameter has not be found/it will be allocated automatically
             if type(image) == dict:
                 for k, v in image.items():
                     printout("{}\n".format(v), YELLOW)
@@ -73,10 +71,11 @@ def verify_flavors(flavors, doc, yamlfile, clients):
         # If the flavor is a dict it will look for its value in the parameters of the template
         else:
             flavor = get_param(flavor, doc)
-            # If the return from the function is a dict it means the parameter has not be found/it will be allocated automatically
+            # If the flavor is a dict it means the parameter has not be found/it will be allocated automatically
             if type(flavor) == dict:
                 for k, v in flavor.items():
                     printout("{}\n".format(v), YELLOW)
+            # If the item is in the client list then it exists
             elif flavor in search_by_name or flavor in search_by_id:
                 printout("     The flavor '{}' used in the template '{}' exists\n".format(flavor, yamlfile), GREEN)
             else:
@@ -111,10 +110,11 @@ def verify_secgroups(sec_groups, doc, yamlfile, clients):
                          RED)
         else:
             sec_group = get_param(sec_group, doc)
-            # If the return from the function is a dict it means the parameter has not be found/it will be allocated automatically
+            # If the sec_group is a dict it means the parameter has not be found/it will be allocated automatically
             if type(sec_group) == dict:
                 for k, v in sec_group.items():
                     printout("{}\n".format(v), YELLOW)
+            # If the item is in the client list then it exists
             elif sec_group in security_id_list or sec_group in security_name_list:
                 printout("     The security group '{}' used in the template '{}' exists\n".format(sec_group, yamlfile),
                          GREEN)
@@ -143,11 +143,12 @@ def verify_networks(networks, doc, yamlfile, clients):
         # If it is a dictionary it has to find the parameter in the template
         elif type(network) == dict:
             network = get_param(network, doc)
-            # If the return from the function is a dict it means the parameter has not be found/it will be allocated automatically
+            # If the network is a dict it means the parameter has not be found/it will be allocated automatically
             if type(network) == dict:
                 for k, v in network.items():
                     printout("{}\n".format(v), YELLOW)
             else:
+                # If the item is in the client list then it exists
                 search_by_name = neutron.list_networks(name=network)
                 search_by_id = neutron.list_networks(id=network)
                 if search_by_name['networks'] or search_by_id['networks']:
@@ -165,6 +166,7 @@ def verify_networks(networks, doc, yamlfile, clients):
                 if type(port) == str:
                     search_by_id = neutron.list_ports(id=port)
                     search_by_name = neutron.list_ports(name=port)
+                    # If the item is in the client list then it exists
                     if search_by_id['ports'] or search_by_name['ports']:
                         printout(
                             "     The network with port '{}' used in the template '{}' exists\n".format(port, yamlfile),
@@ -176,11 +178,12 @@ def verify_networks(networks, doc, yamlfile, clients):
                             RED)
                 elif type(port) == dict:
                     port = get_param(port, doc)
-                    # If the return from the function is a dict it means the parameter has not be found/it will be allocated automatically
+                    # If the port is a dict it means the parameter has not be found/it will be allocated automatically
                     if type(port) == dict:
                         for k, v in port.items():
                             printout("{}\n".format(v), YELLOW)
                     else:
+                        # If the item is in the client list then it exists
                         search_by_id = neutron.list_ports(id=port)
                         search_by_name = neutron.list_ports(name=port)
                         if search_by_id['ports'] or search_by_name['ports']:
@@ -209,7 +212,7 @@ def verify_networks(networks, doc, yamlfile, clients):
                     # subnets['subnets'] is made of dictionaries
                     search_by_id.append(item['id'])
                     search_by_name.append(item['name'])
-                # If our subnet is in one or in the other list then it exists
+                # If the item is in the client list then it exists
                 if subnet in search_by_id or subnet in search_by_name:
                     printout("     The subnet '{}' used in the template '{}' exists\n".format(subnet, yamlfile), GREEN)
                 else:
@@ -238,11 +241,12 @@ def verify_ports(ports, doc, yamlfile, clients):
                 printout("     The port used in the template '{}' does not exist\n".format(yamlfile), RED)
         elif type(port) == dict:
             port = get_param(port, doc)
-            # If the return from the function is a dict it means the parameter has not be found/it will be allocated automatically
+            # If the port is a dict it means the parameter has not be found/it will be allocated automatically
             if type(port) == dict:
                 for k, v in port.items():
                     printout("{}\n".format(v), YELLOW)
             else:
+                # If the item is in the client list then it exists
                 search_by_id = neutron.list_ports(id=port)
                 search_by_name = neutron.list_ports(name=port)
                 if search_by_id['ports'] or search_by_name['ports']:
@@ -275,11 +279,12 @@ def verify_keypairs(keypairs, doc, yamlfile, clients):
                          RED)
         elif type(keypair) == dict:
             keypair = get_param(keypair, doc)
-            # If the return from the function is a dict it means the parameter has not be found/it will be allocated automatically
+            # If the keypair is a dict it means the parameter has not be found/it will be allocated automatically
             if type(keypair) == dict:
                 for k, v in keypair.items():
                     printout("{}\n".format(v), YELLOW)
             else:
+                # If the item is in the client list then it exists
                 if keypair in search_by_id or keypair in search_by_name:
                     printout("     The keypair '{}' used in the template '{}' exists\n".format(keypair, yamlfile),
                              GREEN)
@@ -313,11 +318,12 @@ def verify_volumes(volumes, doc, yamlfile, clients):
                          RED)
         elif type(volume) == dict:
             volume = get_param(volume, doc)
-            # If the return from the function is a dict it means the parameter has not be found/it will be allocated automatically
+            # If the volume is a dict it means the parameter has not be found/it will be allocated automatically
             if type(volume) == dict:
                 for k, v in volume.items():
                     printout("{}\n".format(v), YELLOW)
             else:
+                # If the item is in the client list then it exists
                 if volume in search_by_id or volume in search_by_name:
                     printout("     The volume '{}' used in the template '{}' exists\n".format(volume, yamlfile), GREEN)
                 else:
