@@ -24,7 +24,7 @@ setuptools.setup(
         ]},
     install_requires=['yamllint',
                       'cryptography',
-                      'PyYAML==5.1',
+                      'PyYAML==5.4',
                       'keystoneauth1==3.14.0',
                       'openstacksdk==0.26.0',
                       'python-cinderclient==4.2.0',
